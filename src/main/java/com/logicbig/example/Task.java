@@ -1,6 +1,7 @@
 package com.logicbig.example;
 
 
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
@@ -8,12 +9,17 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Indexed
 @Entity
 @IdClass(CompositeTaskId.class)
 public class Task {
+
+    @DocumentId
+    private String documentId;
+
     @Id
     private int employeeId;
     @Id
@@ -26,6 +32,12 @@ public class Task {
 
     public Task() {
     }
+
+    @Transient
+    public String getDocumentId() {
+        return String.valueOf(employeeId) + String.valueOf(taskId);
+    }
+
 
     public Task(int employeeId, int taskId) {
         this.employeeId = employeeId;

@@ -1,5 +1,8 @@
 package com.logicbig.example;
 
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.Search;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -13,11 +16,21 @@ public class ExampleMain2 {
                 Persistence.createEntityManagerFactory("example-unit");
         try {
             persistEntity(emf);
+            indexEntities(emf);
             runNativeQuery(emf);
             findEntityById(emf);
+            indexEntities(emf);
+
+
         } finally {
             emf.close();
         }
+    }
+
+    private static void indexEntities(EntityManagerFactory emf) throws InterruptedException {
+        FullTextEntityManager fullTextEntityManager
+                = Search.getFullTextEntityManager(emf.createEntityManager());
+        fullTextEntityManager.createIndexer().startAndWait();
     }
 
     private static void persistEntity(EntityManagerFactory emf) throws Exception {
